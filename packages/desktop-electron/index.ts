@@ -25,6 +25,7 @@ import promiseRetry from 'promise-retry';
 import type { GlobalPrefsJson } from '../loot-core/src/types/prefs';
 
 import { getMenu } from './menu';
+import { saveFile, type FileContents } from './saveFile';
 import {
   get as getWindowState,
   listen as listenToWindowState,
@@ -576,7 +577,7 @@ ipcMain.handle(
 export type SaveFileDialogPayload = {
   title: SaveDialogOptions['title'];
   defaultPath?: SaveDialogOptions['defaultPath'];
-  fileContents: string | Buffer;
+  fileContents: FileContents;
 };
 
 ipcMain.handle(
@@ -587,18 +588,9 @@ ipcMain.handle(
   ) => {
     const fileLocation = await dialog.showSaveDialog({ title, defaultPath });
 
-    return new Promise<void>((resolve, reject) => {
-      if (fileLocation) {
-        const contents =
-          typeof fileContents === 'string'
-            ? fileContents
-            : new Uint8Array(fileContents.buffer);
-        fs.writeFile(fileLocation.filePath, contents, error => {
-          return reject(error);
-        });
-      }
-      resolve();
-    });
+    if (fileLocation) {
+      await saveFile(fileLocation.filePath, fileContents);
+    }
   },
 );
 
