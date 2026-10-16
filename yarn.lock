@@ -14026,6 +14026,7 @@ __metadata:
     fs-extra: "npm:^11.3.3"
     promise-retry: "npm:^2.0.1"
     typescript: "npm:^5.9.3"
+    vitest: "npm:^4.0.16"
   languageName: unknown
   linkType: soft
 
